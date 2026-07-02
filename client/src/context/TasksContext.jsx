@@ -27,6 +27,8 @@ export const TasksProvider = ({ children }) => {
         status: filterStatus === 'All' ? '' : filterStatus,
         page,
         limit,
+        search: searchTerm,
+        sortBy,
       });
 
       setTasks(data);
@@ -36,20 +38,14 @@ export const TasksProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [user, filterStatus, page]);
+  }, [user, filterStatus, page, searchTerm, sortBy]);
 
   // Fetch full stats (database-wide)
   const fetchStats = useCallback(async () => {
     if (!user) return;
     try {
-      const allTasks = await taskApi.getTasks({ limit: 1000 });
-      const computed = { total: allTasks.length, pending: 0, progress: 0, completed: 0 };
-      allTasks.forEach((t) => {
-        if (t.status === 'Pending') computed.pending++;
-        else if (t.status === 'In Progress') computed.progress++;
-        else if (t.status === 'Completed') computed.completed++;
-      });
-      setStats(computed);
+      const data = await taskApi.getStats();
+      setStats(data);
     } catch (error) {
       console.error('Error fetching stats:', error.message);
     }
@@ -61,9 +57,19 @@ export const TasksProvider = ({ children }) => {
     fetchStats();
   }, [fetchTasks, fetchStats]);
 
-  // Reset page to 1 when changing filters
+  // Handlers that reset page to 1 when search, sort or filter changes
   const handleFilterChange = (newStatus) => {
     setFilterStatus(newStatus);
+    setPage(1);
+  };
+
+  const handleSearchChange = (newSearch) => {
+    setSearchTerm(newSearch);
+    setPage(1);
+  };
+
+  const handleSortChange = (newSort) => {
+    setSortBy(newSort);
     setPage(1);
   };
 
@@ -111,35 +117,10 @@ export const TasksProvider = ({ children }) => {
     }
   };
 
-  const getProcessedTasks = () => {
-    let processed = [...tasks];
-
-    if (searchTerm.trim()) {
-      const term = searchTerm.toLowerCase();
-      processed = processed.filter(
-        (t) =>
-          t.title.toLowerCase().includes(term) ||
-          (t.description && t.description.toLowerCase().includes(term))
-      );
-    }
-
-    processed.sort((a, b) => {
-      if (sortBy === 'newest') {
-        return new Date(b.createdAt) - new Date(a.createdAt);
-      }
-      if (sortBy === 'oldest') {
-        return new Date(a.createdAt) - new Date(b.createdAt);
-      }
-      return 0;
-    });
-
-    return processed;
-  };
-
   return (
     <TasksContext.Provider
       value={{
-        tasks: getProcessedTasks(),
+        tasks,
         rawTasksCount: tasks.length,
         loading,
         page,
@@ -148,9 +129,9 @@ export const TasksProvider = ({ children }) => {
         filterStatus,
         setFilterStatus: handleFilterChange,
         searchTerm,
-        setSearchTerm,
+        setSearchTerm: handleSearchChange,
         sortBy,
-        setSortBy,
+        setSortBy: handleSortChange,
         stats,
         addTask,
         editTask,

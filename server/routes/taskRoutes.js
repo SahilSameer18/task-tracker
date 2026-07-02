@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { getTasks, createTask, updateTask, deleteTask} = require('../controllers/taskController');
+const { getTasks, getTasksStats, createTask, updateTask, deleteTask} = require('../controllers/taskController');
 const { protect } = require('../middlewares/authMiddleware');
+
+// GET request to fetch task count statistics
+router.get('/stats', protect, getTasksStats);
 
 // GET request to fetch all tasks
 router.get('/', protect, getTasks);
