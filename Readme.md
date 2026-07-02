@@ -39,7 +39,7 @@ graph TD
     end
 
     subgraph Server [Express REST API Backend]
-        taskApi -- HTTP Cookies / Bearer --> Router[server.js / Routes]
+        taskApi -- HTTP Cookies / Bearer --> Router[server.js]
         authApi -- HTTP Credentials --> Router
         Router --> AuthMiddleware[authMiddleware.js]
         Router --> TaskController[taskController.js]
@@ -49,14 +49,37 @@ graph TD
         TaskModel --> DB[(MongoDB Atlas)]
         UserModel --> DB
     end
-    
-    classDef clientStyle fill:#3b82f6,stroke:#1d4ed8,color:#fff;
-    classDef serverStyle fill:#8b5cf6,stroke:#6d28d9,color:#fff;
-    classDef dbStyle fill:#10b981,stroke:#047857,color:#fff;
-    
-    class Client,App,AuthProvider,TasksProvider,Dashboard,Sidebar,TaskCard,TaskModal,Toast,taskApi,authApi clientStyle;
-    class Server,Router,AuthMiddleware,TaskController,UserController,TaskModel,UserModel serverStyle;
-    class DB dbStyle;
+```
+
+---
+
+## 📂 Folder Structure
+
+```text
+task-tracker/
+├── client/                 # Frontend React Application (Vite)
+│   ├── public/             # Static public assets
+│   ├── src/
+│   │   ├── api/            # API service calls (Axios client)
+│   │   ├── components/     # Reusable UI components (Sidebar, Card, Modal, etc.)
+│   │   ├── context/        # React Context providers (Auth, Tasks)
+│   │   ├── pages/          # Page layouts (Dashboard, Login, Register)
+│   │   ├── App.jsx         # App routing and base layout
+│   │   ├── main.jsx        # Client entrypoint
+│   │   └── index.css       # Core design system stylesheet
+│   ├── .env.development    # Local development environment configs
+│   ├── .env.production     # Production environment configs
+│   └── package.json
+│
+└── server/                 # Backend Node/Express API
+    ├── config/             # Database connection setups
+    ├── controllers/        # Request handlers (Business logic)
+    ├── middlewares/        # Security and session guards
+    ├── models/             # Mongoose schemas (Task, User)
+    ├── routes/             # REST route definitions
+    ├── .env                # Backend environment variables
+    ├── server.js           # Server bootstrap and middleware setup
+    └── package.json
 ```
 
 ---
@@ -91,10 +114,6 @@ graph TD
 
 ## 🔧 Installation & Local Setup
 
-### Prerequisites
-* [Node.js](https://nodejs.org/) (v16+ recommended)
-* MongoDB database instance (local or [MongoDB Atlas](https://www.mongodb.com/cloud/atlas))
-
 ### Step 1: Clone the Repository
 ```bash
 git clone https://github.com/SahilSameer18/task-tracker.git
@@ -102,6 +121,7 @@ cd task-tracker
 ```
 
 ### Step 2: Configure Backend Server
+
 1. Navigate into the `server` directory and install dependencies:
    ```bash
    cd server
@@ -109,11 +129,11 @@ cd task-tracker
    ```
 2. Create a `.env` file in the `server` root:
    ```env
-   PORT=3000
-   MONGO_URI=your_mongodb_connection_uri
-   JWT_SECRET=your_jwt_signature_secret
-   CLIENT_URL=http://localhost:5173
-   NODE_ENV=development
+   PORT=3000                                           # Port to run the server on
+   MONGO_URI=your_mongodb_connection_uri              # MongoDB connection URI (local or Atlas)
+   JWT_SECRET=your_jwt_signature_secret               # Secret key used to sign JSON Web Tokens
+   CLIENT_URL=http://localhost:5173                    # URL of the client (for CORS matching)
+   NODE_ENV=development                                # Environment (development/production)
    ```
 3. Launch the development server:
    ```bash
@@ -121,17 +141,27 @@ cd task-tracker
    ```
 
 ### Step 3: Configure Frontend Client
+
 1. Open a new terminal window, navigate into the `client` directory and install dependencies:
    ```bash
    cd client
    npm install
    ```
-2. Create a `.env` file in the `client` root:
-   ```env
-   VITE_API_URL=http://localhost:3000/api
-   ```
+2. Set up environment variables:
+   - For **local development**, ensure `client/.env.development` exists with:
+     ```env
+     VITE_API_URL=http://localhost:3000/api
+     ```
+   - For **production deployment**, ensure `client/.env.production` exists with:
+     ```env
+     VITE_API_URL=https://your-backend-url.onrender.com/api
+     ```
 3. Launch the React development client:
    ```bash
    npm run dev
    ```
 4. Access the web application in your browser at `http://localhost:5173`.
+
+---
+
+Developed by **Sahil Sameer Siddique**
