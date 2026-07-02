@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Colors */
+  --bg-primary: #0b0f19;
+  --bg-secondary: #131a26;
+  --bg-tertiary: #1c2635;
+  
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  
+  --accent-purple: #8b5cf6;
+  --accent-purple-glow: rgba(139, 92, 246, 0.15);
+  --accent-blue: #3b82f6;
+  --accent-blue-glow: rgba(59, 130, 246, 0.15);
+  
+  /* Status Colors */
+  --status-pending-bg: rgba(245, 158, 11, 0.1);
+  --status-pending-text: #fbbf24;
+  --status-pending-border: rgba(245, 158, 11, 0.3);
+  
+  --status-progress-bg: rgba(59, 130, 246, 0.1);
+  --status-progress-text: #60a5fa;
+  --status-progress-border: rgba(59, 130, 246, 0.3);
+  
+  --status-completed-bg: rgba(16, 185, 129, 0.1);
+  --status-completed-text: #34d399;
+  --status-completed-border: rgba(16, 185, 129, 0.3);
+  
+  --status-overdue-bg: rgba(244, 63, 94, 0.1);
+  --status-overdue-text: #fb7185;
+  --status-overdue-border: rgba(244, 63, 94, 0.3);
+
+  /* Layout */
+  --sidebar-width: 260px;
+  --header-height: 70px;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-glow: 0 0 12px rgba(139, 92, 246, 0.1);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Global Resets */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scrollbar customization */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-purple);
+}
+
+.glass {
+  background: rgba(19, 26, 38, 0.96);
+  border: 1px solid var(--border-color);
+}
+
+/* Reusable Inline Skeleton Shimmer */
+.skeleton-text {
+  color: transparent !important;
+  background-color: var(--bg-tertiary) !important;
+  border-color: transparent !important;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  pointer-events: none;
+  display: inline-block;
+  min-width: 50px;
+}
+
+.skeleton-text * {
+  visibility: hidden !important;
+}
+
+.skeleton-text::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+

@@ -82,7 +82,7 @@ const updateTask = async (req, res) => {
     const updatedTask = await Task.findByIdAndUpdate(
       id,
       { title, description, status, dueDate },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     );
 
     res.status(200).json(updatedTask);
