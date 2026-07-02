@@ -42,11 +42,12 @@ const registerUser = async (req, res) => {
       const token = generateToken(user._id);
 
       // Set cookie options
+      const isProd = process.env.NODE_ENV === 'production';
       const cookieOptions = {
         httpOnly: true,
         expires: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000), // 4 days
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        secure: isProd,
+        sameSite: isProd ? 'none' : 'lax',
       };
 
       res.cookie('token', token, cookieOptions);
@@ -79,11 +80,12 @@ const loginUser = async (req, res) => {
       const token = generateToken(user._id);
 
       // Set cookie options
+      const isProd = process.env.NODE_ENV === 'production';
       const cookieOptions = {
         httpOnly: true,
         expires: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000), // 4 days
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        secure: isProd,
+        sameSite: isProd ? 'none' : 'lax',
       };
 
       res.cookie('token', token, cookieOptions);
@@ -107,11 +109,12 @@ const loginUser = async (req, res) => {
  */
 const logoutUser = async (req, res) => {
   try {
+    const isProd = process.env.NODE_ENV === 'production';
     res.cookie('token', '', {
       httpOnly: true,
       expires: new Date(0),
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
     });
     res.status(200).json({ message: 'Logged out successfully' });
   } catch (error) {

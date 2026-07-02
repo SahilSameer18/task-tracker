@@ -1,35 +1,30 @@
+import axios from 'axios';
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
-// Main request wrapper relying purely on cookie credentials
+const client = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true, // Tells Axios to include cookies in cross-origin requests
+});
+
+// Unified request wrapper matching the signature used by other API services
 export const request = async (endpoint, options = {}) => {
-  const url = `${API_BASE_URL}${endpoint}`;
-  
-  const headers = {
-    'Content-Type': 'application/json',
-    ...options.headers,
-  };
-
-  const config = {
-    ...options,
-    headers,
-    credentials: 'include',
-  };
-
-  if (options.body) {
-    config.body = JSON.stringify(options.body);
-  }
-
   try {
-    const response = await fetch(url, config);
-    const data = await response.json();
+    const config = {
+      url: endpoint,
+      method: options.method || 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+      data: options.body,
+    };
 
-    if (!response.ok) {
-      throw new Error(data.message || 'Something went wrong');
-    }
-
-    return data;
+    const response = await client(config);
+    return response.data;
   } catch (error) {
-    console.error(`API Error in ${endpoint}:`, error.message);
-    throw error;
+    const message = error.response?.data?.message || error.message || 'Something went wrong';
+    console.error(`API Error in ${endpoint}:`, message);
+    throw new Error(message);
   }
 };

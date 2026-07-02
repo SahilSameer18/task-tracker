@@ -18,8 +18,9 @@ const app = express();
 connectDB();
 
 // Middleware Setup
+const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173')
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: clientUrl,
   credentials: true,
 }));
 
